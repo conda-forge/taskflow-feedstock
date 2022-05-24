@@ -1,5 +1,5 @@
 {% set name = "taskflow" %}
-{% set version = "3.3.0" %}
+{% set version = "3.4.0" %}
 
 package:
   name: {{ name|lower }}
@@ -7,7 +7,7 @@ package:
 
 source:
   url: https://github.com/taskflow/{{ name }}/archive/v{{ version }}.tar.gz
-  sha256: 66b891f706ba99a5ca5ed239d520ad6943ebe94728d1c89e07a939615a6488ef
+  sha256: 8f449137d3f642b43e905aeacdf1d7c5365037d5e1586103ed4f459f87cecf89
 
 build:
   number: 0
@@ -25,8 +25,8 @@ test:
     - test -f ${PREFIX}/include/taskflow/taskflow.hpp  # [unix]
     - test -f ${PREFIX}/lib/cmake/Taskflow/TaskflowConfig.cmake  # [osx]
     - test -f ${PREFIX}/lib/cmake/Taskflow/TaskflowConfigVersion.cmake  # [osx]
-    - test -f ${PREFIX}/lib64/cmake/Taskflow/TaskflowConfig.cmake  # [linux]
-    - test -f ${PREFIX}/lib64/cmake/Taskflow/TaskflowConfigVersion.cmake  # [linux]
+    - test -f ${PREFIX}/lib/cmake/Taskflow/TaskflowConfig.cmake  # [linux]
+    - test -f ${PREFIX}/lib/cmake/Taskflow/TaskflowConfigVersion.cmake  # [linux]
     - if not exist %LIBRARY_PREFIX%\include\taskflow\taskflow.hpp (exit 1)  # [win]
     - if not exist %LIBRARY_PREFIX%\lib\cmake\Taskflow\TaskflowConfig.cmake (exit 1)  # [win]
     - if not exist %LIBRARY_PREFIX%\lib\cmake\Taskflow\TaskflowConfigVersion.cmake (exit 1)  # [win]
