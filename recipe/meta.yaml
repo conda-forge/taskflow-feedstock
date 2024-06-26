@@ -10,15 +10,16 @@ source:
   sha256: 788b88093fb3788329ebbf7c7ee05d1f8960d974985a301798df01e77e04233b
 
 build:
-  number: 2
+  number: 3
   skip: true  # [win and vc<14]
 
 requirements:
   build:
-    - make
-    - cmake
     - {{ compiler('cxx') }}
     - {{ stdlib("c") }}
+    - cmake
+    - make
+    - ninja  # [not win]
 
 test:
   commands:
