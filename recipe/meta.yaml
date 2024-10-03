@@ -1,5 +1,5 @@
 {% set name = "taskflow" %}
-{% set version = "3.7.0" %}
+{% set version = "3.8.0" %}
 
 package:
   name: {{ name|lower }}
@@ -7,10 +7,10 @@ package:
 
 source:
   url: https://github.com/taskflow/{{ name }}/archive/v{{ version }}.tar.gz
-  sha256: 788b88093fb3788329ebbf7c7ee05d1f8960d974985a301798df01e77e04233b
+  sha256: 51316ee5fbf0c8f8f4638eb7428430cadfe6e8910756593884710e99129fa0ab
 
 build:
-  number: 3
+  number: 0
   skip: true  # [win and vc<14]
 
 requirements:
