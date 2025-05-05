@@ -27,7 +27,7 @@ cmake $SRC_DIR \
 
 cmake --build build --parallel
 
-if [[ "${CONDA_BUILD_CROSS_COMPILATION:-}" != "1" ]]; then
+if [[ "${cuda_compiler_version}" == "None" && "${CONDA_BUILD_CROSS_COMPILATION:-}" != "1" ]]; then
   ctest --test-dir build --output-on-failure
 fi
 

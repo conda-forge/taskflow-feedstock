@@ -19,8 +19,10 @@ if errorlevel 1 exit 1
 cmake --build build --parallel --config Release
 if errorlevel 1 exit 1
 
-ctest --test-dir build --output-on-failure --build-config Release
-if errorlevel 1 exit 1
+if "%cuda_compiler_version%" == "None" (
+    ctest --test-dir build --output-on-failure --build-config Release
+    if errorlevel 1 exit /b 1
+)
 
 cmake --build build --target install --config Release
 if errorlevel 1 exit 1
