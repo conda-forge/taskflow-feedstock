@@ -1,6 +1,12 @@
 #!/bin/bash
 set -e
 
+if [[ ${cuda_compiler_version} != "None" ]]; then
+  BUILD_CUDA=ON
+else
+  BUILD_CUDA=OFF
+fi
+
 if [[ "${target_platform}" == osx-arm64 ]]; then
   BUILD_TESTS=OFF
 else
@@ -16,7 +22,7 @@ cmake $SRC_DIR \
   -DTF_BUILD_EXAMPLES=OFF \
   -DTF_BUILD_TESTS=$BUILD_TESTS \
   -DTF_BUILD_BENCHMARKS=OFF \
-  -DTF_BUILD_CUDA=OFF \
+  -DTF_BUILD_CUDA=$BUILD_CUDA \
   -DTF_BUILD_SYCL=OFF
 
 cmake --build build --parallel
