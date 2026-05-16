@@ -1,0 +1,75 @@
+schema_version: 1
+
+context:
+  name: taskflow
+  version: "4.0.0"
+
+package:
+  name: ${{ name|lower }}
+  version: ${{ version }}
+
+source:
+  url: https://github.com/taskflow/${{ name }}/archive/v${{ version }}.tar.gz
+  sha256: a9d27ad29caffc95e394976c6a362debb94194f9b3fbb7f25e34aaf54272f497
+
+build:
+  number: 1
+  skip:
+    - win and vc < 14
+  script:
+    - if: unix
+      then: bash "${RECIPE_DIR}/build.sh"
+    - if: win
+      then: call "%RECIPE_DIR%\\build.bat"
+
+requirements:
+  build:
+    - ${{ compiler('cxx') }}
+    - ${{ stdlib("c") }}
+    - cmake
+    - make
+    - if: not win
+      then: ninja
+
+tests:
+  - requirements:
+      run:
+        - ${{ compiler('cxx') }}
+        - ${{ stdlib("c") }}
+        - cmake
+        - ninja
+    files:
+      recipe:
+        - tests/
+    script:
+      - if: unix
+        then:
+          - test -d "${PREFIX}/include/taskflow"
+          - test -f "${PREFIX}/include/taskflow/taskflow.hpp"
+          - test -f "${PREFIX}/lib/cmake/Taskflow/TaskflowConfig.cmake"
+          - test -f "${PREFIX}/lib/cmake/Taskflow/TaskflowConfigVersion.cmake"
+          - cmake -S tests -B tests/build -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH="${PREFIX}"
+          - cmake --build tests/build --config Release
+          - ctest --test-dir tests/build --output-on-failure
+      - if: win
+        then:
+          - if not exist "%LIBRARY_INC%\\taskflow\\taskflow.hpp" exit 1
+          - if not exist "%LIBRARY_PREFIX%\\lib\\cmake\\Taskflow\\TaskflowConfig.cmake" exit 1
+          - if not exist "%LIBRARY_PREFIX%\\lib\\cmake\\Taskflow\\TaskflowConfigVersion.cmake" exit 1
+          - cmake -S tests -B tests\\build -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH="%LIBRARY_PREFIX%"
+          - cmake --build tests\\build --config Release
+          - ctest --test-dir tests\\build --output-on-failure -C Release
+
+about:
+  homepage: https://github.com/taskflow/taskflow
+  repository: https://github.com/taskflow/taskflow
+  documentation: https://taskflow.github.io/taskflow/index.html
+  summary: Parallel and Heterogeneous Task Programming in Modern C++
+  license: MIT
+  license_family: MIT
+  license_file: LICENSE
+
+extra:
+  recipe-maintainers:
+    - jeongseok-meta
+    - davidbrochart
