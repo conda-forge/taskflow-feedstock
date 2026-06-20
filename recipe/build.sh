@@ -1,7 +1,8 @@
 #!/bin/bash
 set -e
 
-if [[ "${target_platform}" == osx-arm64 ]]; then
+if [[ "${CONDA_BUILD_CROSS_COMPILATION:-}" == "1" || "${target_platform}" == osx-arm64 ]]; then
+  # Cross-built variants cannot run upstream unit tests, so avoid compiling them only to skip ctest.
   BUILD_TESTS=OFF
 else
   BUILD_TESTS=ON
