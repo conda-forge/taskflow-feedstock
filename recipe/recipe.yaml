@@ -2,7 +2,7 @@ schema_version: 1
 
 context:
   name: taskflow
-  version: "4.0.0"
+  version: "4.1.0"
 
 package:
   name: ${{ name|lower }}
@@ -10,10 +10,10 @@ package:
 
 source:
   url: https://github.com/taskflow/${{ name }}/archive/v${{ version }}.tar.gz
-  sha256: a9d27ad29caffc95e394976c6a362debb94194f9b3fbb7f25e34aaf54272f497
+  sha256: 2107f90e315e48a676922010b036357ff2b0c6b9160ce17fa9396e5860b1d715
 
 build:
-  number: 1
+  number: 0
   skip:
     - win and vc < 14
   script:
@@ -31,34 +31,28 @@ requirements:
     - if: not win
       then: ninja
 
+# Windows CI runs upstream tests during the build; skip the installed-consumer
+# package test there because rattler-build cannot remove its Azure test prefix.
 tests:
-  - requirements:
-      run:
-        - ${{ compiler('cxx') }}
-        - ${{ stdlib("c") }}
-        - cmake
-        - ninja
-    files:
-      recipe:
-        - tests/
-    script:
-      - if: unix
-        then:
-          - test -d "${PREFIX}/include/taskflow"
-          - test -f "${PREFIX}/include/taskflow/taskflow.hpp"
-          - test -f "${PREFIX}/lib/cmake/Taskflow/TaskflowConfig.cmake"
-          - test -f "${PREFIX}/lib/cmake/Taskflow/TaskflowConfigVersion.cmake"
-          - cmake -S tests -B tests/build -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH="${PREFIX}"
-          - cmake --build tests/build --config Release
-          - ctest --test-dir tests/build --output-on-failure
-      - if: win
-        then:
-          - if not exist "%LIBRARY_INC%\\taskflow\\taskflow.hpp" exit 1
-          - if not exist "%LIBRARY_PREFIX%\\lib\\cmake\\Taskflow\\TaskflowConfig.cmake" exit 1
-          - if not exist "%LIBRARY_PREFIX%\\lib\\cmake\\Taskflow\\TaskflowConfigVersion.cmake" exit 1
-          - cmake -S tests -B tests\\build -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH="%LIBRARY_PREFIX%"
-          - cmake --build tests\\build --config Release
-          - ctest --test-dir tests\\build --output-on-failure -C Release
+  - if: unix
+    then:
+      requirements:
+        run:
+          - ${{ compiler('cxx') }}
+          - ${{ stdlib("c") }}
+          - cmake
+          - ninja
+      files:
+        recipe:
+          - tests/
+      script:
+        - test -d "${PREFIX}/include/taskflow"
+        - test -f "${PREFIX}/include/taskflow/taskflow.hpp"
+        - test -f "${PREFIX}/share/cmake/Taskflow/TaskflowConfig.cmake"
+        - test -f "${PREFIX}/share/cmake/Taskflow/TaskflowConfigVersion.cmake"
+        - cmake -S tests -B tests/build -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH="${PREFIX}"
+        - cmake --build tests/build --config Release
+        - ctest --test-dir tests/build --output-on-failure
 
 about:
   homepage: https://github.com/taskflow/taskflow
